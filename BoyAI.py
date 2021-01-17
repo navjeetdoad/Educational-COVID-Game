@@ -4,11 +4,17 @@ screen = display.set_mode((800,600))
 
 class BoyAI:
 
-    def __init__(self, x_pos, y_pos, pics):
+    def __init__(self, x_pos, y_pos, pics, startX, startY, endX, endY):
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.pics = pics #2d list
         self.hitbox = Rect(x_pos - 35, y_pos - 35, 70, 70)
+        self.startX = startX
+        self.startY = startY
+        self.endX = endX
+        self.endY = endY
+        self.targetX = endX
+        self.targetY = endY
 
         right = []
         down = []
@@ -33,24 +39,38 @@ class BoyAI:
         self.frame = 0
 
 
-    def moveBoyAI(self, boy):
 
-        keys = key.get_pressed()
+    def moveBoy(self, newX, newY):
+
         newMove = -1
-        
 
-        newMove = 3
-        self.x_pos -= 3
+        if self.x_pos < newX:
+            newMove = 0
+            self.x_pos += 4
+        elif self.y_pos < newY:
+            newMove = 1
+            self.y_pos += 4
+        elif self.y_pos > newY:
+            newMove = 2
+            self.y_pos -= 4
+        elif self.x_pos > newX:
+            newMove = 3
+            self.x_pos -= 4
+        else:
+            self.frame = 0
 
         move = self.move
-            
-        if move == newMove:     # 0 is a standing pose, so we want to skip over it when we are moving
-            self.frame = self.frame + 0.27 
+
+        if move == newMove:  # 0 is a standing pose, so we want to skip over it when we are moving
+            self.frame = self.frame + 0.27
             if self.frame >= len(self.pics[self.move]):
                 self.frame = 1
-        elif newMove != -1:     # a move was selected
-            self.move = newMove      # make that our current move
+        elif newMove != -1:  # a move was selected
+            self.move = newMove  # make that our current move
             self.frame = 1
+
+        if self.frame == 0:
+            return "Turn"
 
     def makeMove(self, name, start,end):
         move = []
@@ -64,15 +84,12 @@ class BoyAI:
         move = self.move
         frame = self.frame
         pics = self.pics
-        
-        screen.fill((200,222,255))
+
         pic = pics[move][int(frame)]
-        screen.blit(pic,(self.x_pos-pic.get_width()//2,self.y_pos-pic.get_height()//2))            
-        display.flip()
+        screen.blit(pic,(self.x_pos-pic.get_width()//2,self.y_pos-pic.get_height()//2))
 
     def drawHitbox(self):
         draw.rect(screen, (255,0,0), self.hitbox)
-        display.flip()
 
     def update(self):
         self.hitbox = Rect(self.x_pos - 35, self.y_pos - 35, 70, 70)
