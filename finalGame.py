@@ -184,7 +184,7 @@ while running:
 
         # if you collide with the other children, sends you back to the start of the room
         if (boy.hitbox.colliderect(sitting_1_hitbox) or boy.hitbox.colliderect(sitting_2_hitbox) or boy.hitbox.colliderect(sitting_3_hitbox)):
-            boy = Boy(570,700, [[0 for x in range(3)] for y in range(4)])
+            boy = Boy(570,700, [[0 for x in range(3)] for y in range(4)], screen)
             warning = True   
 
         # goes to the next game if you collide with the correct rect
@@ -204,16 +204,65 @@ g = ProximityGame()
 while True:
 
     g.update()
-    g.draw()
+    if g.draw() == "Break":
+        print("end")
+        break
 
     # Check inputs
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            print(pygame.mouse.get_pos())
 
     pygame.display.update()
     myClock.tick(70)  # Fps (Don't know why/how it does it)
 
-quit()
+hand = image.load("Assets/hand.png")
+handX, handY = 100, 500
+hand = pygame.transform.scale(hand, (800, 200))
+tap = image.load("Assets/waterTap.png")
+bathroom = image.load("Assets/background.png")
+germs = [pygame.transform.scale(image.load("Assets/germs.png"), (40, 40)) for i in range(10)]
+germPos = [[random.randrange(200, 650), random.randrange(35, 65)] for i in range(10)]
+
+clock = pygame.time.Clock()
+print("continue")
+while True:
+    screen.fill((255, 255, 255))
+    pygame.draw.rect(screen, (25, 50, 200), (300, 200, 75, 500))
+    screen.blit(tap, (50, 10))
+
+    mousePos = pygame.mouse.get_pos()
+    screen.blit(hand, (mousePos[0] - 500, mousePos[1]))
+
+    for i in range(len(germs) -1, -1, -1):
+        if germs[i] != "NA":
+            germ = germs[i]
+            x, y = germPos[i]
+            mousePos = pygame.mouse.get_pos()
+            screen.blit(germ, (x + mousePos[0] - 500,y + mousePos[1]))
+            x += mousePos[0] - 500
+            y += mousePos[1]
+            if 300 < x and x < 375:
+                germs[i] = "NA"
+                continue
+
+    flag = True
+    for i in range(len(germs)):
+        if germs[i] != "NA": flag = False
+
+    if flag:
+        screen.fill((53,215,255))
+        exitTitle1 = "Congrats! You've learned about"
+        exitTitle2 = "how to keep safe from COVID-19!"
+        exitScreen1 = titleFont.render(exitTitle1, True, (255,255,255))
+        exitScreen2 = titleFont.render(exitTitle2, True, (255,255,255))
+        screen.blit(exitScreen1, (100,255))
+        screen.blit(exitScreen2, (100,300))
+        
+
+    for evnt in pygame.event.get():
+        if evnt.type == QUIT:
+            sys.exit()
+
+    pygame.display.update()
+    clock.tick(70)  # Fps (Don't know why/how it does it)

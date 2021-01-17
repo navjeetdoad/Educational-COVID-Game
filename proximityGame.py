@@ -45,6 +45,12 @@ class ProximityGame:
     def draw(self):
 
         screen.screen.blit(self.background,(0,0,screen.w,screen.h))
+
+        hallwayFont = font.SysFont("Comic Sans MS", 48)
+        hallwayTitle = "Make it to the door and avoid the students!"
+        hallwayText = hallwayFont.render(hallwayTitle, True, (255,255,255))
+        screen.screen.blit(hallwayText, (40,0))
+        
         self.p.moveBoy(self.p)
         self.p.drawBoy()
         self.p.x_pos = min(max(35, self.p.x_pos), 800 - 35)
@@ -52,7 +58,7 @@ class ProximityGame:
 
 
         if self.p.x_pos > 589 and self.p.x_pos < 762 and self.p.y_pos > 337 and self.p.y_pos < 422:
-            print("Collision")
+            return "Break"
 
         for other in self.otherP:
             self.checkCollision(self.p, other)
